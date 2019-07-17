@@ -1,0 +1,127 @@
+@model IList<CentreAffaire.Models.ChargeAffaire>
+@{
+    ViewBag.Title = "ListCharge";
+}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
+
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>
+<table id="demoGrid" class="table  table table-hover dt-responsive nowrap" width="100%" cellspacing="0">
+
+    <thead>
+        <tr>
+            <th class="th-sm">
+                Matricule
+            </th>
+            <th class="th-sm">
+                Intitulé
+            </th>
+            <th class="th-sm">
+                Nombre de compte
+            </th>
+            <th class="th-sm">
+                Action
+            </th>
+            
+
+        </tr>
+    </thead>
+    @foreach (var obj in Model)
+    {
+    <tr>
+        <td>@obj.matricule</td>
+        <td>@obj.Intitule</td>
+        <td> 59</td>
+        <td> <a id="detail" onclick="update_url('consulter/@obj.id')" data-toggle="modal" data-target="#exampleModal">consulter</a> </td>
+        
+    </tr>
+    }
+
+</table>
+<div class="modal fade modalStyle" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="update_urlClose()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 class="modal-title" id="exampleModalLabel">Liste des comptes du chargé <span id="name"></span></h3>
+            </div>
+            <div class="modal-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">code agence</th>
+                            <th scope="col">Numéro de compte</th>
+                            <th scope="col">Intitulé</th>
+                            <th scope="col">Intérimaire</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rowHolder">
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Retour</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $('#demoGrid').dataTable({
+    });
+</script>
+<script>
+    function getData() { 
+        var pathArray = window.location.pathname.split('/');
+        var secondLevelLocation = pathArray[3];
+        console.log("aaaaaaaaaaa");
+        
+        $.ajax({
+            
+            url: "/ChargeAffaire/consulter/" + secondLevelLocation,
+            method: 'post',
+            dataType: 'json',
+            success: function (csResponse) {
+
+                $("#name").text(csResponse[0].charge.intitule);
+
+                let s = "";
+                for (let i=0;i<csResponse.length;i++){
+                            s += "<tr>"
+                            +"<td>"+csResponse[i].codeAgence+"</td>"
+                            +"<td>"+csResponse[i].numeroCompte+"</td>"
+                            +"<td>"+csResponse[i].intitule+"</td>"
+                            +"<td>"+csResponse[i].interimaire.intitule+"</td>"
+                            +"<td>"
+                                +"<a href='#'>Supprimer compte</a>"
+                                +"<br/>"
+                                +"<a href='#'>Changer affectation</a>"
+                            +"</td>";
+                            +"</tr>"
+                }
+                document.getElementById("rowHolder").innerHTML = s;
+            }
+        
+            
+        });
+    }
+    function update_url(url) {
+        history.pushState(null, null, url);
+        getData();
+    }
+    function update_urlClose()
+    {
+        history.pushState(null, null, "/ChargeAffaire/ListCharge");
+    }
+    $("#exampleModal").click(update_urlClose);
+</script>
+
