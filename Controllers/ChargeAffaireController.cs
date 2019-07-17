@@ -13,18 +13,24 @@ namespace CentreAffaire.Controllers
         // GET: ChargeAffaire
         public ActionResult ListCharge()
         {
-            ChargeAffaire ca = new ChargeAffaire();
-            List<ChargeAffaire> listCharge = ca.getListCharge();
+            //ListCharges.list.Clear();
+            List<ChargeAffaire> listCharge = ListCharges.getStaticListCharge();
             return View(listCharge);
         }
         [HttpPost]
         public ActionResult consulter(int id)
         {
-            Compte c = new Compte();
-            List<Compte> listC = c.getListComptes();
-           /* ChargeAffaire ca = new ChargeAffaire();
-            List<ChargeAffaire> listCharge = ca.getListCharge();*/
+            //ChargeAffaire.getStaticListComptes(id);
+            List<Compte> listC = ListCharges.list[id].listComptes;
             return Json(listC);
         }
+
+        [HttpPost]
+        public ActionResult Ajouter(int id, int codeAgence,int numCompte, string intitule)
+        {
+            ListCharges.list[id].addCompte(numCompte, codeAgence, intitule);
+            return RedirectToAction("ListCharge");
+        }
+
     }
 }

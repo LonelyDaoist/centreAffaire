@@ -11,16 +11,24 @@ namespace CentreAffaire.Models
         public int matricule { get; set; }
         public String Intitule { get; set; }
 
+        public List<Compte> listComptes = new List<Compte>();
 
-        public List<ChargeAffaire> getListCharge()
+        public void addCompte(int numC, int codeA, string intit)
         {
-            ChargeAffaire ca1 = new ChargeAffaire() { id = 1, matricule = 123456, Intitule = "Mustapha Belhaj" };
-            ChargeAffaire ca2 = new ChargeAffaire() { id = 2, matricule = 456789, Intitule = "Ahmed Ben Chrifa" };
-            ChargeAffaire ca3 = new ChargeAffaire() { id = 3, matricule = 124578, Intitule = "Mongia Chérif" };
-            ChargeAffaire ca4 = new ChargeAffaire() { id = 4, matricule = 713641, Intitule = "Ghassen Ghassen" };
-            List<ChargeAffaire> listCharge = new List<ChargeAffaire>();
-            listCharge.Add(ca1); listCharge.Add(ca2); listCharge.Add(ca3); listCharge.Add(ca4);
-            return listCharge;
+            listComptes.Add(new Compte(){id=listComptes.Count,numeroCompte=numC, codeAgence=codeA,intitule=intit, chargeIntitule=this.Intitule,interimaireIntitule=this.Intitule});
         }
+
+        /*
+        public static void getStaticListComptes(int _id)
+        {   
+            Random rnd = new Random();
+            ListCharges.list[_id].listComptes.Clear();
+            ListCharges.list[_id].addCompte(rnd.Next(1000,10000),rnd.Next(1,100),"A."+ListCharges.list[_id].Intitule);
+            ListCharges.list[_id].addCompte(rnd.Next(1000,10000),rnd.Next(1,100),"B."+ListCharges.list[_id].Intitule);
+            ListCharges.list[_id].addCompte(rnd.Next(1000,10000),rnd.Next(1,100),"C."+ListCharges.list[_id].Intitule);
+            ListCharges.list[_id].addCompte(rnd.Next(1000,10000),rnd.Next(1,100),"D."+ListCharges.list[_id].Intitule);
+        }
+        */
+
     }
 }

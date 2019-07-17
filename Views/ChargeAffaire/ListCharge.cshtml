@@ -35,8 +35,13 @@
         <td>@obj.matricule</td>
         <td>@obj.Intitule</td>
         <td> 59</td>
-        <td> <a id="detail" onclick="update_url('consulter/@obj.id')" data-toggle="modal" data-target="#exampleModal">consulter</a> </td>
-        
+        <td>
+            <a id="detail" onclick="update_url('consulter/@obj.id')" data-toggle="modal" data-target="#exampleModal">consulter</a>
+            <br/>
+            <a id="interim"  data-toggle="modal" data-target="#interimeModal">Ajouter un intérimaire</a>
+            <br/>
+            <a id="ajout"  onclick="updateAction(@obj.id)" data-toggle="modal" data-target="#ajoutModal">Ajouter un compte</a>
+        </td> 
     </tr>
     }
 
@@ -74,6 +79,38 @@
     </div>
 </div>
 
+<div class="modal fade modalStyle" id="ajoutModal" tabindex="-1" role="dialog" aria-labelledby="ajoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="update_urlClose()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 class="modal-title" id="ajoutModalLabel">Ajouter un compte</h3>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="Ajouter">
+                    <label for="codeAgence">Code Agence</label>
+                    <input type="text" id="codeAgence" name="codeAgence"><br/>
+
+                    <label for="numCompte">Numéro de Compte</label>
+                    <input type="text" id="numCompte" name="numCompte"><br/>
+
+                    <label for="intitule">Intitule</label>
+                    <input type="text" id="intitule" name="intitule"><br/>
+                    <input class="btn btn-primary" type="submit" value="Ajouter" onclick="f()">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
 
     $('#demoGrid').dataTable({
@@ -83,16 +120,17 @@
     function getData() { 
         var pathArray = window.location.pathname.split('/');
         var secondLevelLocation = pathArray[3];
-        console.log("aaaaaaaaaaa");
         
         $.ajax({
             
             url: "/ChargeAffaire/consulter/" + secondLevelLocation,
             method: 'post',
             dataType: 'json',
+            error: (res) => console.log(res),
             success: function (csResponse) {
+                ;
 
-                $("#name").text(csResponse[0].charge.intitule);
+                //$("#name").text(csResponse[0].charge.intitule);
 
                 let s = "";
                 for (let i=0;i<csResponse.length;i++){
@@ -100,11 +138,11 @@
                             +"<td>"+csResponse[i].codeAgence+"</td>"
                             +"<td>"+csResponse[i].numeroCompte+"</td>"
                             +"<td>"+csResponse[i].intitule+"</td>"
-                            +"<td>"+csResponse[i].interimaire.intitule+"</td>"
+                            +"<td>"+csResponse[i].interimaireIntitule+"</td>"
                             +"<td>"
                                 +"<a href='#'>Supprimer compte</a>"
                                 +"<br/>"
-                                +"<a href='#'>Changer affectation</a>"
+                                + "<a href='#'>Changer affectation</a>"
                             +"</td>";
                             +"</tr>"
                 }
@@ -123,5 +161,9 @@
         history.pushState(null, null, "/ChargeAffaire/ListCharge");
     }
     $("#exampleModal").click(update_urlClose);
+    function updateAction(id) {
+        $("form").get(0).setAttribute("action","Ajouter/"+id);
+    }
+
 </script>
 
