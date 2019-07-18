@@ -128,24 +128,26 @@
             dataType: 'json',
             error: (res) => console.log(res),
             success: function (csResponse) {
-                ;
-
-                //$("#name").text(csResponse[0].charge.intitule);
-
                 let s = "";
-                for (let i=0;i<csResponse.length;i++){
-                            s += "<tr>"
-                            +"<td>"+csResponse[i].codeAgence+"</td>"
-                            +"<td>"+csResponse[i].numeroCompte+"</td>"
-                            +"<td>"+csResponse[i].intitule+"</td>"
-                            +"<td>"+csResponse[i].interimaireIntitule+"</td>"
-                            +"<td>"
-                                +"<a href='#'>Supprimer compte</a>"
-                                +"<br/>"
-                                + "<a href='#'>Changer affectation</a>"
-                            +"</td>";
-                            +"</tr>"
+                if (csResponse.length !== 0){
+                    
+                    $("#name").text(csResponse[0].charge.intitule);
+
+                    for (let i=0;i<csResponse.length;i++){
+                                s += "<tr>"
+                                +"<td>"+csResponse[i].codeAgence+"</td>"
+                                +"<td>"+csResponse[i].numeroCompte+"</td>"
+                                +"<td>"+csResponse[i].intitule+"</td>"
+                                +"<td>"+csResponse[i].interimaire.intitule+"</td>"
+                                +"<td>"
+                                    +"<a href='#'>Supprimer compte</a>"
+                                    +"<br/>"
+                                    + "<a href='#'>Changer affectation</a>"
+                                +"</td>";
+                                +"</tr>"
+                    }
                 }
+                    
                 document.getElementById("rowHolder").innerHTML = s;
             }
         

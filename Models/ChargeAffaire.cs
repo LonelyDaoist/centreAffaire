@@ -15,7 +15,7 @@ namespace CentreAffaire.Models
 
         public void addCompte(int numC, int codeA, string intit)
         {
-            listComptes.Add(new Compte(){id=listComptes.Count,numeroCompte=numC, codeAgence=codeA,intitule=intit, chargeIntitule=this.Intitule,interimaireIntitule=this.Intitule});
+            listComptes.Add(new Compte(){id=listComptes.Count,numeroCompte=numC, codeAgence=codeA,intitule=intit, charge=new employee(this.id,this.Intitule),interimaire=new employee(this.id,this.Intitule)});
         }
 
         /*
