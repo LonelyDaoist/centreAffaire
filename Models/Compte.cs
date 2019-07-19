@@ -22,7 +22,7 @@ namespace CentreAffaire.Models
         public int numeroCompte { get; set; }
         public int codeAgence { get; set; }
         public String intitule { get; set; }
-        public employee charge = new employee();
+        public employee charge;
         public employee interimaire;
 
 

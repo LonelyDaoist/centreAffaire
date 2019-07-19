@@ -32,5 +32,27 @@ namespace CentreAffaire.Controllers
             return RedirectToAction("ListCharge");
         }
 
+        [HttpPost]
+        public ActionResult CheckCOmptes(int id)
+        {
+            List<Compte> list = ListCharges.list[id].listComptes;
+            return Json(list);
+        }
+        
+        [HttpPost]
+        public ActionResult checkInterim(int id)
+        {
+            List<ChargeAffaire> list = ListCharges.list.FindAll(x => x.id != id);
+            return Json(list);
+        }
+
+        public ActionResult Supprimer(int id,int idCompte)
+        {
+            // must also update the ids for future deletes
+            ListCharges.list[id].listComptes.RemoveAt(idCompte);
+            return RedirectToAction("ListCharge");
+            //return Content($"Compte: {idCompte} Charge: {id}");
+        }
+
     }
 }

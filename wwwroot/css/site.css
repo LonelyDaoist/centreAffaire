@@ -48,3 +48,28 @@ textarea {
 #ajoutModal row{
   margin-bottom: 5%;  
 }
+:root {
+  --s: 70px;
+  --r: 20px;
+}
+
+.step-div {
+  display: flex;
+  width: var(--s);
+  height: var(--s);
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-left: 10px;
+}
+
+.step{
+  width: var(--r);
+  height: var(--r);
+  background: #aaa;
+  opacity: 0.5;
+  border-radius: 50%;
+}
+
+.step-in-use {
+  opacity: 1;
+}

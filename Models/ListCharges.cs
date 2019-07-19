@@ -10,7 +10,7 @@ namespace CentreAffaire.Models
 
         public static void addCharge(int matr, string nom)
         {
-            list.Add(new ChargeAffaire() {id=list.Count,matricule=matr, Intitule=nom});
+            list.Add(new ChargeAffaire() {id=list.Count,matricule=matr, intitule=nom});
         }
 
         public static List<ChargeAffaire> getStaticListCharge()

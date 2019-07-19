@@ -33,12 +33,12 @@
     {
     <tr>
         <td>@obj.matricule</td>
-        <td>@obj.Intitule</td>
+        <td>@obj.intitule</td>
         <td> 59</td>
         <td>
-            <a id="detail" onclick="update_url('consulter/@obj.id')" data-toggle="modal" data-target="#exampleModal">consulter</a>
+            <a class="cls" id="detail" onclick="update_url('consulter/@obj.id')" data-toggle="modal" data-target="#exampleModal" nameOfCharge='@obj.intitule'>consulter</a>
             <br/>
-            <a id="interim"  data-toggle="modal" data-target="#interimeModal">Ajouter un intérimaire</a>
+            <a id="interim" onclick="startInterim(@obj.id)" data-toggle="modal" data-target="#listeCompte">Ajouter un intérimaire</a>
             <br/>
             <a id="ajout"  onclick="updateAction(@obj.id)" data-toggle="modal" data-target="#ajoutModal">Ajouter un compte</a>
         </td> 
@@ -110,6 +110,87 @@
     </div>
 </div>
 
+<form><!-- method="POST" action="DoSomething">-->
+<!--modal liste compte -->
+<div class="modal fade modalStyle" id="listeCompte" tabindex="-1" role="dialog" aria-labelledby="listeCompteLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="step-div">
+                    <div class="step"></div>
+                    <div class="step step-in-use"></div>
+                    <div class="step"></div>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="update_urlClose()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 class="modal-title" id="listeCompteLabel">Liste des comptes du chargé <span id="name"></span></h3>
+            </div>
+            <div class="modal-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">
+                                <input onclick="checkAll()" type="checkbox" class="form-check-input" id="allCheck">
+                                <label class="form-check-label" for="allCheck">Sélectionner tout</label>
+                            </th>
+                            <th scope="col">Code agence</th>
+                            <th scope="col">Numéro de compte</th>
+                            <th scope="col">Intitulé</th>
+
+                        </tr>
+                    </thead>
+                    <tbody id="rowHolder2"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Retour</button>
+                <button id ="secondScreen" data-toggle="modal" data-target="#listeInterimaire" type="button" class="btn btn-primary" data-dismiss="modal">Suivant</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--modal liste interimaire -->
+<div class="modal fade modalStyle" id="listeInterimaire" tabindex="-1" role="dialog" aria-labelledby="listeInterimaireLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="step-div">
+                    <div class="step"></div>
+                    <div class="step"></div>
+                    <div class="step step-in-use"></div>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="update_urlClose()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 class="modal-title" id="listeInterimaireLabel">Choisir un intérimaire <span id="name"></span></h3>
+            </div>
+            <div class="modal-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col"></th>
+                            <th scope="col">Matricule</th>
+                            <th scope="col">Intitulé</th>
+
+                        </tr>
+                    </thead>
+                    <tbody id="rowHolder3">
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                <input type="submit" id="thirdScreen" class="btn btn-primary" value="Affecter">
+            </div>
+        </div>
+    </div>
+</div>
+</form>
+
+
+
 
 <script>
 
@@ -126,12 +207,15 @@
             url: "/ChargeAffaire/consulter/" + secondLevelLocation,
             method: 'post',
             dataType: 'json',
-            error: (res) => console.log(res),
+            error: (err) => console.log(err),
             success: function (csResponse) {
+                
+                //let name = $(".cls:eq("+secondLevelLocation+")").attr("nameOfCharge");
+                //console.log(name);
+                //$("#name").text(name);
                 let s = "";
+                console.log(csResponse);
                 if (csResponse.length !== 0){
-                    
-                    $("#name").text(csResponse[0].charge.intitule);
 
                     for (let i=0;i<csResponse.length;i++){
                                 s += "<tr>"
@@ -140,15 +224,15 @@
                                 +"<td>"+csResponse[i].intitule+"</td>"
                                 +"<td>"+csResponse[i].interimaire.intitule+"</td>"
                                 +"<td>"
-                                    +"<a href='#'>Supprimer compte</a>"
+                                    +'<a href="Supprimer/'+csResponse[i].charge.id+'?idCompte='+csResponse[i].id+'">Supprimer compte</a>'
                                     +"<br/>"
                                     + "<a href='#'>Changer affectation</a>"
-                                +"</td>";
-                                +"</tr>"
+                                +"</td>"
+                                +"</tr>";
                     }
                 }
                     
-                document.getElementById("rowHolder").innerHTML = s;
+                $("#rowHolder").html(s);
             }
         
             
@@ -162,9 +246,80 @@
     {
         history.pushState(null, null, "/ChargeAffaire/ListCharge");
     }
-    $("#exampleModal").click(update_urlClose);
+    $(".modal").click(update_urlClose);
     function updateAction(id) {
         $("form").get(0).setAttribute("action","Ajouter/"+id);
+    }
+
+    function startInterim(id){
+        history.pushState(null,null,"CheckComptes/"+id);
+        $("#allCheck").prop("checked",false);
+        $("#secondScreen").click(() => selectInterim(id));
+        $.ajax({
+            url:"/ChargeAffaire/CheckComptes/"+id,
+            method: 'post',
+            dataType: 'json',
+            error: (err) => consolelog(err),
+            success: (res) =>   {
+                let s = "";
+                for (let i=0;i<res.length;i++){
+                    s+= '<tr>'
+                            +'<td>'
+                                +'<input value="'+ res[i].id +'"type="checkbox" class="checkChild form-check-input" id="exampleCheck1">'
+                                +'<label class="form-check-label" for="exampleCheck1"></label>'
+                            +'</td>'
+                            +'<td>'
+                                +res[i].codeAgence
+                            +'</td>'
+                            +'<td>'
+                                +res[i].numeroCompte
+                            +'</td>'
+                            +'<td>'
+                                +res[i].intitule
+                            +'</td>'
+                        +'</tr>';
+                }
+                $("#rowHolder2").html(s);
+            }
+            
+        });
+    }
+    function checkAll() {
+        let state = $("#allCheck").prop("checked");
+        //console.log(state);
+        $(".checkChild").prop("checked",state);
+    }
+
+    function selectInterim(id) {
+        history.pushState(null,null,"checkInterim/"+id);
+        
+
+        $("#thirdScreen").click(() => alert("done"));
+
+        $.ajax({
+            url:"/ChargeAffaire/checkInterim/"+id,
+            method: 'post',
+            dataType: 'json',
+            error: (err) => consolelog(err),
+            success: (res) =>   {
+                //console.log(res);
+                let s = "";
+                for (let i=0;i<res.length;i++){
+                    s+= '<tr>'
+                            +'<td>'
+                                +'<input type="radio" name="optradio">'
+                            +'</td>'
+                            +'<td>'
+                                +res[i].matricule
+                            +'</td>'
+                            +'<td>'
+                                +res[i].intitule
+                            +'</td>'
+                        +'</tr>';
+                }
+                $("#rowHolder3").html(s);
+            }
+        });
     }
 
 </script>
