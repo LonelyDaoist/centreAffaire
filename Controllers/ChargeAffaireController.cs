@@ -48,10 +48,9 @@ namespace CentreAffaire.Controllers
 
         public ActionResult Supprimer(int id,int idCompte)
         {
-            // must also update the ids for future deletes
             ListCharges.list[id].listComptes.RemoveAt(idCompte);
+            ListCharges.list[id].updateIds(idCompte);
             return RedirectToAction("ListCharge");
-            //return Content($"Compte: {idCompte} Charge: {id}");
         }
 
     }

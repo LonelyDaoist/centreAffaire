@@ -18,6 +18,14 @@ namespace CentreAffaire.Models
             listComptes.Add(new Compte(){id=listComptes.Count,numeroCompte=numC, codeAgence=codeA,intitule=intit, charge=new employee(this.id,this.intitule),interimaire=new employee(this.id,this.intitule)});
         }
 
+        public void updateIds(int n)
+        {
+            for (int i=n;i<listComptes.Count;i++)
+            {
+                listComptes[i].id--;
+            }
+        }
+
         /*
         public static void getStaticListComptes(int _id)
         {   
