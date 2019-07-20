@@ -114,7 +114,7 @@
 
                             </tr>
                         </thead>
-                        <tbody id="rowHolder2"></tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
                 <div class="modal-footer">
@@ -173,60 +173,38 @@
     </div>
 
     <!--modal Changement affectation -->
-    <div class="modal fade modalStyle" id="changementAffectation" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
+    <form id="formAffectation" method="POST">
+        <div class="modal fade modalStyle" id="changementAffectation" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
 
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="update_urlClose()">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <h3 class="modal-title" id="exampleModalLabel">Choisir un autre chargé <span id="name"></span></h3>
-                </div>
-                <div class="modal-body">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr class="styleHeaderTab">
-                                <th scope="col"></th>
-                                <th scope="col">Matricule</th>
-                                <th scope="col">Intitulé</th>
-
-                            </tr>
-                        </thead>
-                        <!-- <tbody id="rowHolder2"></tbody>-->
-                        <tbody>
-                            <tr>
-                                <td><input type="radio" name="optradio"></td>
-                                <td>123598</td>
-                                <td>Mongia Chérif</td>
-                            </tr>
-                            <tr>
-                                <td><input type="radio" name="optradio"></td>
-                                <td>589648</td>
-                                <td>Mohamed ben Mohamed</td>
-                            </tr>
-                            <tr>
-                                <td><input type="radio" name="optradio"></td>
-                                <td>256988</td>
-                                <td>Mohamed Gouider</td>
-                            </tr>
-                            <tr>
-                                <td><input type="radio" name="optradio"></td>
-                                <td>698777</td>
-                                <td>Amir ben Mohamed</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-
-                    <button data-toggle="modal" data-target="#exampleModal" type="button" class="btn btn-primary" data-dismiss="modal">Affecter</button>
-
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="update_urlClose()">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h3 class="modal-title" id="exampleModalLabel">Choisir un chargé <span id="name"></span></h3>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr class="styleHeaderTab">
+                                    <th scope="col"></th>
+                                    <th scope="col">Matricule</th>
+                                    <th scope="col">Intitulé</th>
+                                    <th><input id="hiddenValue" type="hidden" name="idCompte"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="rowHolder2"></tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                        <input class="btn btn-danger" type="submit" value="Affecter">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </form>
 
 
     <!--modal Ajout compte -->
@@ -240,7 +218,7 @@
                     </button>
                     <h3 class="modal-title" id="ajoutModalLabel">Ajouter un compte</h3>
                 </div>
-                <form method="POST" action="Ajouter">
+                <form id="formAjout" method="POST" action="Ajouter">
                     <div class="modal-body flexbox-modal">
                         <div class="flexbox-modal-child">
                             <span style="height:32px;">Code agence</span>
@@ -326,7 +304,6 @@
                 //console.log(name);
                 //$("#name").text(name);
                 let s = "";
-                console.log(csResponse);
                 if (csResponse.length !== 0){
 
                     for (let i=0;i<csResponse.length;i++){
@@ -336,9 +313,9 @@
                                 <td>${csResponse[i].intitule}</td>
                                 <td>${csResponse[i].interimaire.intitule}</td>
                                 <td>
-                                    <a class="no-href" onclick="f(${csResponse[i].charge.id},${csResponse[i].id})" data-toggle="modal" data-target="#SuppressionCompte">Supprimer compte</a>
+                                    <a class="no-href" onclick="updateSuppression(${csResponse[i].charge.id},${csResponse[i].id})" data-toggle="modal" data-target="#SuppressionCompte">Supprimer compte</a>
                                     <br/>
-                                    <a href='#'>Changer affectation</a>
+                                    <a class="no-href" onclick="updateAffectation(${csResponse[i].charge.id},${csResponse[i].id})" data-toggle="modal" data-target="#changementAffectation">Affecter compte</a>
                                 </td>
                             </tr>`;
                     }
@@ -353,8 +330,38 @@
             
         });
     }
-    function f(idCharge,idCompte) {
-        $("#SupprimerBtn").click(() => window.location.href = "Supprimer/"+idCharge+"?idCompte="+idCompte);
+    function updateSuppression(idCharge,idCompte) {
+        $("#SupprimerBtn").click(() => window.location.href = `Supprimer/${idCharge}?idCompte=${idCompte}`);
+    }
+    function updateAffectation(idCharge,idCompte) {
+        $("#formAffectation").prop("action",`Affecter/${idCharge}`);
+        $("#hiddenValue").prop("value",idCompte);
+        $.ajax({
+            url: `/ChargeAffaire/Remplacant/${idCharge}`,
+            method: 'post',
+            dataType: 'json',
+            error: (err) => console.log(err),
+            success: (res) => {
+                console.log(res);
+                let s = '';
+                if (res.length!==0){
+                    for (let i=0;i<res.length;i++){
+                        s+= `<tr>
+                                <td>
+                                    <input type="radio" name="idCharge" value=${res[i].id}>
+                                </td>
+                                <td>
+                                    ${res[i].matricule}
+                                </td>
+                                <td>
+                                    ${res[i].intitule}f
+                                </td>
+                            </tr>`;
+                    }
+                }
+                $("#rowHolder2").html(s);
+            }
+        });
     }
 
     function update_url(url) {
@@ -367,7 +374,7 @@
     }
     $(".modal").click(update_urlClose);
     function updateAction(id) {
-        $("form").get(0).setAttribute("action","Ajouter/"+id);
+        $("#formAjout").prop("action","Ajouter/"+id);
     }
 
     function startInterim(id){
@@ -398,7 +405,7 @@
                             +'</td>'
                         +'</tr>';
                 }
-                $("#rowHolder2").html(s);
+                //$("#rowHolderx2").html(s);
             }
             
         });

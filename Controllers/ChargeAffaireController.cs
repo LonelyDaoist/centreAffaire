@@ -53,5 +53,23 @@ namespace CentreAffaire.Controllers
             return RedirectToAction("ListCharge");
         }
 
+        [HttpPost]
+        public ActionResult Remplacant(int id)
+        {
+            List<ChargeAffaire> list = ListCharges.list.FindAll(x => x.id != id);
+            return Json(list);
+        }
+
+        [HttpPost]
+        public ActionResult Affecter(int id,int idCompte,int idCharge)
+        {
+            Compte cpt = ListCharges.list[id].listComptes[idCompte];
+            ListCharges.list[idCharge].addCompte(cpt.numeroCompte,cpt.codeAgence,cpt.intitule);
+            ListCharges.list[id].listComptes.RemoveAt(idCompte);
+            ListCharges.list[id].updateIds(idCompte);
+            return RedirectToAction("ListCharge");
+            //return Content($"account: {idCompte},  old: {id},  new: {idCharge}");
+        }
+
     }
 }
