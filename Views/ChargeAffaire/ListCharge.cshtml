@@ -75,7 +75,7 @@
                                 <th scope="col">Numéro de compte</th>
                                 <th scope="col">Intitulé</th>
                                 <th scope="col">Intérimaire</th>
-                                <!--<th scope="col">Action</th>-->
+                                <th scope="col"></th>
                             </tr>
                         </thead>
                         <tbody id="rowHolder"></tbody>
@@ -330,17 +330,17 @@
                 if (csResponse.length !== 0){
 
                     for (let i=0;i<csResponse.length;i++){
-                                s += "<tr>"
-                                +"<td>"+csResponse[i].codeAgence+"</td>"
-                                +"<td>"+csResponse[i].numeroCompte+"</td>"
-                                +"<td>"+csResponse[i].intitule+"</td>"
-                                +"<td>"+csResponse[i].interimaire.intitule+"</td>"
-                                +"<td>"
-                                    +'<a class="no-href" onclick="f('+csResponse[i].charge.id+','+csResponse[i].id+')" data-toggle="modal" data-target="#SuppressionCompte">Supprimer compte</a>'
-                                    +"<br/>"
-                                    + "<a href='#'>Changer affectation</a>"
-                                +"</td>"
-                                +"</tr>";
+                        s +=`<tr>
+                                <td>${csResponse[i].codeAgence}</td>
+                                <td>${csResponse[i].numeroCompte}</td>
+                                <td>${csResponse[i].intitule}</td>
+                                <td>${csResponse[i].interimaire.intitule}</td>
+                                <td>
+                                    <a class="no-href" onclick="f(${csResponse[i].charge.id},${csResponse[i].id})" data-toggle="modal" data-target="#SuppressionCompte">Supprimer compte</a>
+                                    <br/>
+                                    <a href='#'>Changer affectation</a>
+                                </td>
+                            </tr>`;
                     }
                 }
                     
