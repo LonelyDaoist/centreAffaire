@@ -45,7 +45,7 @@
                 <td>@obj.intitule</td>
                 <td> 59</td>
                 <td id="linkContainer">
-                    <a class="cls no-href" id="detail" onclick="update_url('consulter/@obj.id')" data-toggle="modal" data-target="#exampleModal" nameOfCharge='@obj.intitule'>consulter</a>
+                    <a class="cls no-href" id="detail" onclick="update_url('consulter/@obj.id')" data-toggle="modal" data-target="#exampleModal">consulter</a>
                     <br/>
                     <a class="no-href" id="interim" onclick="startInterim(@obj.id)" data-toggle="modal" data-target="#listeCompte">Ajouter un intérimaire</a>
                     <br/>
@@ -299,23 +299,22 @@
             dataType: 'json',
             error: (err) => console.log(err),
             success: function (csResponse) {
-                
-                //let name = $(".cls:eq("+secondLevelLocation+")").attr("nameOfCharge");
-                //console.log(name);
-                //$("#name").text(name);
+                $("#name").text(csResponse.item1);
                 let s = "";
-                if (csResponse.length !== 0){
+                if (csResponse.item2.length !== 0){
 
-                    for (let i=0;i<csResponse.length;i++){
+                    console.log(csResponse);
+
+                    for (let i=0;i<csResponse.item2.length;i++){
                         s +=`<tr>
-                                <td>${csResponse[i].codeAgence}</td>
-                                <td>${csResponse[i].numeroCompte}</td>
-                                <td>${csResponse[i].intitule}</td>
-                                <td>${csResponse[i].interimaire.intitule}</td>
+                                <td>${csResponse.item2[i].codeAgence}</td>
+                                <td>${csResponse.item2[i].numeroCompte}</td>
+                                <td>${csResponse.item2[i].intitule}</td>
+                                <td>${csResponse.item2[i].interimaire.intitule}</td>
                                 <td>
-                                    <a class="no-href" onclick="updateSuppression(${csResponse[i].charge.id},${csResponse[i].id})" data-toggle="modal" data-target="#SuppressionCompte">Supprimer compte</a>
+                                    <a class="no-href" onclick="updateSuppression(${csResponse.item2[i].charge.id},${csResponse.item2[i].id})" data-toggle="modal" data-target="#SuppressionCompte">Supprimer compte</a>
                                     <br/>
-                                    <a class="no-href" onclick="updateAffectation(${csResponse[i].charge.id},${csResponse[i].id})" data-toggle="modal" data-target="#changementAffectation">Affecter compte</a>
+                                    <a class="no-href" onclick="updateAffectation(${csResponse.item2[i].charge.id},${csResponse.item2[i].id})" data-toggle="modal" data-target="#changementAffectation">Affecter compte</a>
                                 </td>
                             </tr>`;
                     }

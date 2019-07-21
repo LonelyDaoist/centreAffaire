@@ -22,7 +22,8 @@ namespace CentreAffaire.Controllers
         {
             //ChargeAffaire.getStaticListComptes(id);
             List<Compte> listC = ListCharges.list[id].listComptes;
-            return Json(listC);
+            var tuple = (ListCharges.list[id].intitule,listC);
+            return Json(tuple);
         }
 
         [HttpPost]
