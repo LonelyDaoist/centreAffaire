@@ -75,7 +75,14 @@ namespace CentreAffaire.Controllers
         [HttpPost]
         public ActionResult Interimaire(int id,DateTime dateDeb,DateTime dateFin,int[] idsCompte,int idCharge)
         {
-            return Content($"chargé: {ListCharges.list[id].intitule}\nDebut: {dateDeb.Date}\nFin: {dateFin.Date}\nLength: {idsCompte.Length}\nIntérimaire: {ListCharges.list[idCharge].intitule}");
+            foreach (int c in idsCompte)
+            {
+                ListCharges.list[id].listComptes[c].interimaire.id = idCharge;
+                ListCharges.list[id].listComptes[c].interimaire.intitule = ListCharges.list[idCharge].intitule;
+            }
+            List<Compte> list = ListCharges.list[id].listComptes.FindAll(x => x.interimaire.id == id);
+            //return Content($"c: {list.Count}");
+            return RedirectToAction("Listcharge");
         }
 
     }

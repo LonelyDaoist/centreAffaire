@@ -188,7 +188,7 @@
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="update_urlClose()">Annuler</button>
 
                         <!--<button data-toggle="modal" data-target="#exampleModal" type="button" class="btn btn-primary" data-dismiss="modal">Affecter</button>
-                        --><input class="btn btn-primary" type="submit" VALUE="Ajouter">
+                        --><input id="thirdScreen"  class="btn btn-primary" type="submit" value="Ajouter">
                     </div>
                 </div>
             </div>
@@ -312,6 +312,7 @@
     
 </script>
 <script>
+    let cpts = [];
     function getData() { 
         var pathArray = window.location.pathname.split('/');
         var secondLevelLocation = pathArray[3];
@@ -417,10 +418,11 @@
             success: (res) =>   {
                 console.log("second screen");
                 let s = "";
+                cpts = [res.length];
                 for (let i=0;i<res.length;i++){
                     s+= `<tr>
                             <td>
-                                <input value="${res[i].id}" name="idsCompte" type="checkbox" class="checkChild form-check-input" id="exampleCheck1">
+                                <input onchange='handlecheck(this)' value="${res[i].id}" name="idsCompte" type="checkbox" class="checkChild form-check-input" id="exampleCheck1">
                                 <label class="form-check-label" for="exampleCheck1"></label>
                             </td>
                             <td>
@@ -440,6 +442,12 @@
         });
         $("#secondScreen").click(() => selectInterim(id));
     }
+
+    function handlecheck(checkbox) {
+        if (checkbox.checked === true)
+            cpts.push(checkbox.value);
+    }
+
     function checkAll() {
         let state = $("#allCheck").prop("checked");
         //console.log(state);
@@ -448,7 +456,7 @@
 
     function selectInterim(id) {
         history.pushState(null,null,`/ChargeAffaire/SelectInterim/${id}`);
-        
+        console.log(cpts);
         $.ajax({
             url:`/ChargeAffaire/SelectInterim/${id}`,
             method: 'post',
@@ -473,6 +481,25 @@
                 $("#rowHolder3").html(s);
             }
         });
+        if (cpts.length !== cpts[0] +1) {
+            $("#thirdScreen").prop("data-toggle","modal");
+            $("#thirdScreen").prop("data-target","#listeCompte");
+            $("#thirdScreen").prop("data-dismiss","modal");
+        }
+        /*$("#thirdScreen").click(() => {
+            $.ajax({
+                url: `/ChargeAffaire/Interimaire/${id}`,
+                method:"post",
+                dataType: "json",
+                error: (err) => console.log(err),
+                success: (res) => {
+                    if (res.length === 0)
+                        alert("done");
+                    else
+                        alert("not done");
+                }
+            });
+        });*/
     }
     $(".no-href").css({"cursor":"pointer","color":"#077bb1"});
     $(".no-href").parent().css("text-align","center");
