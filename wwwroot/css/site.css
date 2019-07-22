@@ -73,3 +73,8 @@ textarea {
   display: flex;
   flex-direction: column;
 }
+
+.modal-content {
+  width: 175%;
+  margin: 0 -25%;
+}

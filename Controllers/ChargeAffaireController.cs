@@ -33,20 +33,6 @@ namespace CentreAffaire.Controllers
             return RedirectToAction("ListCharge");
         }
 
-        [HttpPost]
-        public ActionResult CheckCOmptes(int id)
-        {
-            List<Compte> list = ListCharges.list[id].listComptes;
-            return Json(list);
-        }
-        
-        [HttpPost]
-        public ActionResult checkInterim(int id)
-        {
-            List<ChargeAffaire> list = ListCharges.list.FindAll(x => x.id != id);
-            return Json(list);
-        }
-
         public ActionResult Supprimer(int id,int idCompte)
         {
             ListCharges.list[id].listComptes.RemoveAt(idCompte);
@@ -70,6 +56,26 @@ namespace CentreAffaire.Controllers
             ListCharges.list[id].updateIds(idCompte);
             return RedirectToAction("ListCharge");
             //return Content($"account: {idCompte},  old: {id},  new: {idCharge}");
+        }
+
+         [HttpPost]
+        public ActionResult CheckComptes(int id)
+        {
+            List<Compte> list = ListCharges.list[id].listComptes.FindAll(x => x.interimaire.id == id);
+            return Json(list);
+        }
+        
+        [HttpPost]
+        public ActionResult SelectInterim(int id)
+        {
+            List<ChargeAffaire> list = ListCharges.list.FindAll(x => x.id != id);
+            return Json(list);
+        }
+
+        [HttpPost]
+        public ActionResult Interimaire(int id,DateTime dateDeb,DateTime dateFin,int[] idsCompte,int idCharge)
+        {
+            return Content($"chargé: {ListCharges.list[id].intitule}\nDebut: {dateDeb.Date}\nFin: {dateFin.Date}\nLength: {idsCompte.Length}\nIntérimaire: {ListCharges.list[idCharge].intitule}");
         }
 
     }

@@ -47,7 +47,7 @@
                 <td id="linkContainer">
                     <a class="cls no-href" id="detail" onclick="update_url('consulter/@obj.id')" data-toggle="modal" data-target="#exampleModal">consulter</a>
                     <br/>
-                    <a class="no-href" id="interim" onclick="startInterim(@obj.id)" data-toggle="modal" data-target="#listeCompte">Ajouter un intérimaire</a>
+                    <a class="no-href" id="interim" onclick="updateInterimaire(@obj.id)" data-toggle="modal" data-target="#dateMission">Ajouter un intérimaire</a>
                     <br/>
                     <a class="no-href" id="ajout"  onclick="updateAction(@obj.id)" data-toggle="modal" data-target="#ajoutModal">Ajouter un compte</a>
                 </td>
@@ -57,7 +57,7 @@
 
     </table>
     <!--modal consulter -->
-    <div class="modal fade modalStyle" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div data-backdrop="static" data-keyboard="false" class="modal fade modalStyle" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -82,99 +82,122 @@
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Retour</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="update_urlClose()">Retour</button>
 
                 </div>
             </div>
         </div>
     </div>
-    <!--modal liste compte -->
-    <div class="modal fade modalStyle" id="listeCompte" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                  
-                    <span class="circle">1</span>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="update_urlClose()">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <h3 class="modal-title" id="exampleModalLabel">Liste des comptes du chargé <span id="name"></span></h3>
-                </div>
-                <div class="modal-body">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr class="styleHeaderTab">
-                                <th scope="col">
-                                    <input onclick="checkAll()" type="checkbox" class="form-check-input" id="allCheck">
-                                    <label class="form-check-label" for="allCheck">Sélectionner tout</label>
-                                </th>
-                                <th scope="col">Code agence</th>
-                                <th scope="col">Numéro de compte</th>
-                                <th scope="col">Intitulé</th>
+    <form id="formInterimaire" method="POST">
+        <!--modal Date mission -->
+        <div data-backdrop="static" data-keyboard="false" class="modal fade modalStyle" id="dateMission" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"  >
+            <div class="modal-dialog" role="document" style="width:400px;">
+                <div class="modal-content">
+                    <div class="modal-header">
 
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Retour</button>
-                    <button id ="secondScreen" data-toggle="modal" data-target="#listeInterimaire" type="button" class="btn btn-primary" data-dismiss="modal">Suivant</button>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="update_urlClose()">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h3 class="modal-title" id="exampleModalLabel">Choisir la date de début et fin de mission<span id="name"></span></h3>
+                    </div>
+                    <div class="modal-body">
+                        <div class="styleDate">  
+                            <div class="dateFlex">
+                                <label fpr="dateDeb" style="width:150px;">Date de début</label>
+                                <input id="dateDeb" type="date" name="dateDeb">
+                            </div>
+                            <div class="dateFlex">
+                                <label fpr="dateFin" style="width:150px;">Date de Fin</label>
+                                <input id="dateFin" type="date" name="dateFin">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="update_urlClose()">Annuler</button>
+                        <button id="firstScreen" data-toggle="modal" data-target="#listeCompte" type="button" class="btn btn-primary" data-dismiss="modal">Suivant</button>
 
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!--modal liste interimaire -->
-    <div class="modal fade modalStyle" id="listeInterimaire" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
+        <!--modal liste compte -->
+        <div data-backdrop="static" data-keyboard="false" class="modal fade modalStyle" id="listeCompte" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="update_urlClose()">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h3 class="modal-title" id="exampleModalLabel">Liste des comptes du chargé <span id="name"></span></h3>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr class="styleHeaderTab">
+                                    <th scope="col">
+                                        <input onclick="checkAll()" type="checkbox" class="form-check-input" id="allCheck">
+                                        <label class="form-check-label" for="allCheck">Sélectionner tout</label>
+                                    </th>
+                                    <th scope="col">Code agence</th>
+                                    <th scope="col">Numéro de compte</th>
+                                    <th scope="col">Intitulé</th>
 
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="update_urlClose()">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <h3 class="modal-title" id="listeInterimaireLabel">Choisir un intérimaire <span id="name"></span></h3>
-                </div>
-                <div class="modal-body">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr class="styleHeaderTab">
-                                <th scope="col"></th>
-                                <th scope="col">Matricule</th>
-                                <th scope="col">Intitulé</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rowHolder4"></tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="update_urlClose()">Retour</button>
+                        <button id ="secondScreen" data-toggle="modal" data-target="#listeInterimaire" type="button" class="btn btn-primary" data-dismiss="modal">Suivant</button>
 
-                            </tr>
-                        </thead>
-                        <tbody id="rowHolder3"></tbody>
-                        <tbody>
-                            <tr>
-                                <td><input type="radio" name="optradio"></td>
-                                <td>123598</td>
-                                <td>Mongia Chérif</td>
-                            </tr>
-                            <tr>
-                                <td><input type="radio" name="optradio"></td>
-                                <td>589648</td>
-                                <td>Mohamed ben Mohamed</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-
-                    <button data-toggle="modal" data-target="#exampleModal" type="button" class="btn btn-primary" data-dismiss="modal">Affecter</button>
-
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+
+        <!--modal liste interimaire -->
+        <div data-backdrop="static" data-keyboard="false" class="modal fade modalStyle" id="listeInterimaire" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="update_urlClose()">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h3 class="modal-title" id="listeInterimaireLabel">Choisir un intérimaire <span id="name"></span></h3>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr class="styleHeaderTab">
+                                    <th scope="col"></th>
+                                    <th scope="col">Matricule</th>
+                                    <th scope="col">Intitulé</th>
+
+                                </tr>
+                            </thead>
+                            <tbody id="rowHolder3"></tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="update_urlClose()">Annuler</button>
+
+                        <!--<button data-toggle="modal" data-target="#exampleModal" type="button" class="btn btn-primary" data-dismiss="modal">Affecter</button>
+                        --><input class="btn btn-primary" type="submit" VALUE="Ajouter">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 
     <!--modal Changement affectation -->
     <form id="formAffectation" method="POST">
-        <div class="modal fade modalStyle" id="changementAffectation" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div data-backdrop="static" data-keyboard="false" class="modal fade modalStyle" id="changementAffectation" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -198,7 +221,7 @@
                         </table>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="update_urlClose()">Annuler</button>
                         <input class="btn btn-danger" type="submit" value="Affecter">
                     </div>
                 </div>
@@ -208,7 +231,7 @@
 
 
     <!--modal Ajout compte -->
-    <div class="modal fade modalStyle" id="ajoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div data-backdrop="static" data-keyboard="false" class="modal fade modalStyle" id="ajoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document" style="width:500px;margin-top:150px;">
             <div class="modal-content">
                 <div class="modal-header">
@@ -238,7 +261,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="update_urlClose()">Annuler</button>
 
                         <input class="btn btn-primary" type="submit" value="Ajouter">
                     </div>
@@ -247,7 +270,7 @@
         </div>
     </div>
         <!-- Modal Supression Compte -->
-    <div class="modal fade" id="SuppressionCompte" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div data-backdrop="static" data-keyboard="false" class="modal fade" id="SuppressionCompte" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" style="width:350px;height:350px;margin-top:150px;">
             <div class="modal-content">
                 <div class="modal-header">
@@ -258,7 +281,7 @@
                     <div>
                         <h5 class="modal-title" id="exampleModalLabel" style="margin-top:20px;margin-bottom:50px;">Voulez-vous vraiment supprimer ce compte?</h5>
                         <center>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="update_urlClose()">Annuler</button>
                             <button id="SupprimerBtn" type="button" class="btn btn-danger">Supprimer</button>
                         </center>
 
@@ -286,6 +309,7 @@
             }
         }
     });
+    
 </script>
 <script>
     function getData() { 
@@ -341,7 +365,7 @@
             dataType: 'json',
             error: (err) => console.log(err),
             success: (res) => {
-                console.log(res);
+                //console.log(res);
                 let s = '';
                 if (res.length!==0){
                     for (let i=0;i<res.length;i++){
@@ -371,43 +395,50 @@
     {
         history.pushState(null, null, "/ChargeAffaire/ListCharge");
     }
-    $(".modal").click(update_urlClose);
+
     function updateAction(id) {
         $("#formAjout").prop("action","Ajouter/"+id);
     }
 
-    function startInterim(id){
-        history.pushState(null,null,"CheckComptes/"+id);
+    function updateInterimaire(id){
+        $("#formInterimaire").prop("action",`/ChargeAffaire/Interimaire/${id}`);
+        $("#firstScreen").click(() => checkComptes(id));
+        console.log("first screen");
+    }
+    function checkComptes(id) {
+        history.pushState(null,null,`/ChargeAffaire/CheckComptes/${id}`);
         $("#allCheck").prop("checked",false);
-        $("#secondScreen").click(() => selectInterim(id));
+        
         $.ajax({
-            url:"/ChargeAffaire/CheckComptes/"+id,
+            url:`/ChargeAffaire/CheckComptes/${id}`,
             method: 'post',
             dataType: 'json',
-            error: (err) => consolelog(err),
+            error: (err) => console.log(err),
             success: (res) =>   {
+                console.log("second screen");
                 let s = "";
                 for (let i=0;i<res.length;i++){
-                    s+= '<tr>'
-                            +'<td>'
-                                +'<input value="'+ res[i].id +'"type="checkbox" class="checkChild form-check-input" id="exampleCheck1">'
-                                +'<label class="form-check-label" for="exampleCheck1"></label>'
-                            +'</td>'
-                            +'<td>'
-                                +res[i].codeAgence
-                            +'</td>'
-                            +'<td>'
-                                +res[i].numeroCompte
-                            +'</td>'
-                            +'<td>'
-                                +res[i].intitule
-                            +'</td>'
-                        +'</tr>';
+                    s+= `<tr>
+                            <td>
+                                <input value="${res[i].id}" name="idsCompte" type="checkbox" class="checkChild form-check-input" id="exampleCheck1">
+                                <label class="form-check-label" for="exampleCheck1"></label>
+                            </td>
+                            <td>
+                                ${res[i].codeAgence}
+                            </td>
+                            <td>
+                                ${res[i].numeroCompte}
+                            </td>
+                            <td>
+                                ${res[i].intitule}
+                            </td>
+                        </tr>`;
                 }
-                //$("#rowHolderx2").html(s);
+                $("#rowHolder4").html(s);
             }
             
         });
+        $("#secondScreen").click(() => selectInterim(id));
     }
     function checkAll() {
         let state = $("#allCheck").prop("checked");
@@ -416,31 +447,28 @@
     }
 
     function selectInterim(id) {
-        history.pushState(null,null,"checkInterim/"+id);
+        history.pushState(null,null,`/ChargeAffaire/SelectInterim/${id}`);
         
-
-        $("#thirdScreen").click(() => alert("done"));
-
         $.ajax({
-            url:"/ChargeAffaire/checkInterim/"+id,
+            url:`/ChargeAffaire/SelectInterim/${id}`,
             method: 'post',
             dataType: 'json',
-            error: (err) => consolelog(err),
+            error: (err) => console.log(err),
             success: (res) =>   {
-                //console.log(res);
+                console.log("first screen");
                 let s = "";
                 for (let i=0;i<res.length;i++){
-                    s+= '<tr>'
-                            +'<td>'
-                                +'<input type="radio" name="optradio">'
-                            +'</td>'
-                            +'<td>'
-                                +res[i].matricule
-                            +'</td>'
-                            +'<td>'
-                                +res[i].intitule
-                            +'</td>'
-                        +'</tr>';
+                    s+= `<tr>
+                            <td>
+                                <input type="radio" name="idCharge" value="${res[i].id}">
+                            </td>
+                            <td>
+                                ${res[i].matricule}
+                            </td>
+                            <td>
+                                ${res[i].intitule}
+                            </td>
+                        </tr>`;
                 }
                 $("#rowHolder3").html(s);
             }
