@@ -47,7 +47,8 @@
                 <td id="linkContainer">
                     <a class="cls no-href" id="detail" onclick="update_url('consulter/@obj.id')" data-toggle="modal" data-target="#exampleModal">consulter</a>
                     <br/>
-                    <a class="no-href" id="interim" onclick="updateInterimaire(@obj.id)" data-toggle="modal" data-target="#dateMission">Ajouter un intérimaire</a>
+                    <!--<a class="no-href" id="interim" onclick="updateInterimaire(@obj.id)" data-toggle="modal" data-target="#listeCompte">Ajouter un intérimaire</a>
+                    --><a class="no-href" id="conge" onclick="updateConge(@obj.id)" data-toggle="modal" data-target="#dateMission">Ajouter un intérimaire</a>
                     <br/>
                     <a class="no-href" id="ajout"  onclick="updateAction(@obj.id)" data-toggle="modal" data-target="#ajoutModal">Ajouter un compte</a>
                 </td>
@@ -65,7 +66,8 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="update_urlClose()">
                         <span aria-hidden="true">&times;</span>
                     </button>
-                    <h3 class="modal-title" id="exampleModalLabel">Liste des comptes du chargé <span id="name"></span></h3>
+                    <h3 class="modal-title" id="exampleModalLabel">Liste des comptes du chargé <span class="name"></span></h3>
+                    <br/>
                 </div>
                 <div class="modal-body">
                     <table class="table table-hover">
@@ -88,7 +90,6 @@
             </div>
         </div>
     </div>
-    <form id="formInterimaire" method="POST">
         <!--modal Date mission -->
         <div data-backdrop="static" data-keyboard="false" class="modal fade modalStyle" id="dateMission" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"  >
             <div class="modal-dialog" role="document" style="width:400px;">
@@ -98,7 +99,7 @@
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="update_urlClose()">
                             <span aria-hidden="true">&times;</span>
                         </button>
-                        <h3 class="modal-title" id="exampleModalLabel">Choisir la date de début et fin de mission<span id="name"></span></h3>
+                        <h3 class="modal-title" id="exampleModalLabel">Choisir la date de début et fin de mission</h3>
                     </div>
                     <div class="modal-body">
                         <div class="styleDate">  
@@ -122,6 +123,7 @@
             </div>
         </div>
 
+        <form id="formInterimaire">
         <!--modal liste compte -->
         <div data-backdrop="static" data-keyboard="false" class="modal fade modalStyle" id="listeCompte" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -131,7 +133,7 @@
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="update_urlClose()">
                             <span aria-hidden="true">&times;</span>
                         </button>
-                        <h3 class="modal-title" id="exampleModalLabel">Liste des comptes du chargé <span id="name"></span></h3>
+                        <h3 class="modal-title" id="exampleModalLabel">Choisir les comptes</h3>
                     </div>
                     <div class="modal-body">
                         <table class="table table-hover">
@@ -168,7 +170,7 @@
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="update_urlClose()">
                             <span aria-hidden="true">&times;</span>
                         </button>
-                        <h3 class="modal-title" id="listeInterimaireLabel">Choisir un intérimaire <span id="name"></span></h3>
+                        <h3 class="modal-title" id="listeInterimaireLabel">Choisir un intérimaire</h3>
                     </div>
                     <div class="modal-body">
                         <table class="table table-hover">
@@ -193,7 +195,7 @@
                 </div>
             </div>
         </div>
-    </form>
+       </form> 
 
     <!--modal Changement affectation -->
     <form id="formAffectation" method="POST">
@@ -205,7 +207,7 @@
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="update_urlClose()">
                             <span aria-hidden="true">&times;</span>
                         </button>
-                        <h3 class="modal-title" id="exampleModalLabel">Choisir un chargé <span id="name"></span></h3>
+                        <h3 class="modal-title" id="exampleModalLabel">Choisir un chargé</h3>
                     </div>
                     <div class="modal-body">
                         <table class="table table-hover">
@@ -324,7 +326,7 @@
             dataType: 'json',
             error: (err) => console.log(err),
             success: function (csResponse) {
-                $("#name").text(csResponse.item1);
+                $(".name").text(csResponse.item1);
                 let s = "";
                 if (csResponse.item2.length !== 0){
 
@@ -403,8 +405,7 @@
 
     function updateInterimaire(id){
         $("#formInterimaire").prop("action",`/ChargeAffaire/Interimaire/${id}`);
-        $("#firstScreen").click(() => checkComptes(id));
-        console.log("first screen");
+        checkComptes(id);
     }
     function checkComptes(id) {
         history.pushState(null,null,`/ChargeAffaire/CheckComptes/${id}`);
@@ -412,17 +413,15 @@
         
         $.ajax({
             url:`/ChargeAffaire/CheckComptes/${id}`,
-            method: 'post',
+            method: 'get',
             dataType: 'json',
             error: (err) => console.log(err),
             success: (res) =>   {
-                console.log("second screen");
                 let s = "";
-                cpts = [res.length];
                 for (let i=0;i<res.length;i++){
                     s+= `<tr>
                             <td>
-                                <input onchange='handlecheck(this)' value="${res[i].id}" name="idsCompte" type="checkbox" class="checkChild form-check-input" id="exampleCheck1">
+                                <input value="${res[i].id}" name="idsCompte" type="checkbox" class="checkChild form-check-input" id="exampleCheck1">
                                 <label class="form-check-label" for="exampleCheck1"></label>
                             </td>
                             <td>
@@ -443,11 +442,6 @@
         $("#secondScreen").click(() => selectInterim(id));
     }
 
-    function handlecheck(checkbox) {
-        if (checkbox.checked === true)
-            cpts.push(checkbox.value);
-    }
-
     function checkAll() {
         let state = $("#allCheck").prop("checked");
         //console.log(state);
@@ -456,14 +450,12 @@
 
     function selectInterim(id) {
         history.pushState(null,null,`/ChargeAffaire/SelectInterim/${id}`);
-        console.log(cpts);
         $.ajax({
             url:`/ChargeAffaire/SelectInterim/${id}`,
-            method: 'post',
+            method: 'get',
             dataType: 'json',
             error: (err) => console.log(err),
             success: (res) =>   {
-                console.log("first screen");
                 let s = "";
                 for (let i=0;i<res.length;i++){
                     s+= `<tr>
@@ -481,25 +473,6 @@
                 $("#rowHolder3").html(s);
             }
         });
-        if (cpts.length !== cpts[0] +1) {
-            $("#thirdScreen").prop("data-toggle","modal");
-            $("#thirdScreen").prop("data-target","#listeCompte");
-            $("#thirdScreen").prop("data-dismiss","modal");
-        }
-        /*$("#thirdScreen").click(() => {
-            $.ajax({
-                url: `/ChargeAffaire/Interimaire/${id}`,
-                method:"post",
-                dataType: "json",
-                error: (err) => console.log(err),
-                success: (res) => {
-                    if (res.length === 0)
-                        alert("done");
-                    else
-                        alert("not done");
-                }
-            });
-        });*/
     }
     $(".no-href").css({"cursor":"pointer","color":"#077bb1"});
     $(".no-href").parent().css("text-align","center");
