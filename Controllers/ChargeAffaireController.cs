@@ -15,7 +15,7 @@ namespace CentreAffaire.Controllers
         {
             //ListCharges.list.Clear();
             List<ChargeAffaire> listCharge = ListCharges.getStaticListCharge();
-            return View(listCharge);
+            return View();
         }
         [HttpPost]
         public ActionResult consulter(int id)
@@ -80,6 +80,19 @@ namespace CentreAffaire.Controllers
                 ListCharges.list[id].listComptes[c].interimaire.intitule = ListCharges.list[idCharge].intitule;
             }
             return RedirectToAction("ListCharge");
+        }
+
+        [HttpGet]
+        public ActionResult GetActif()
+        {
+            var list = ListCharges.list;
+            return Json(list);
+        }
+        [HttpGet]
+        public ActionResult GetConge()
+        {
+            var list = ListCharges.list;
+            return Json(list);
         }
 
     }

@@ -1,4 +1,4 @@
-@model IList<CentreAffaire.Models.ChargeAffaire>
+@*@model IList<CentreAffaire.Models.ChargeAffaire>*@
 @{
     ViewBag.Title = "ListCharge";
 }
@@ -17,6 +17,10 @@
 <script type="text/javascript" src="js/addons-pro/stepper.min.js"></script>
 -->
 <div>
+    <select onchange="handleSelect()">
+        <option value="Actif">Actifs</option>
+        <option value="Conge">En Congé</option>
+    </select>
 
     <table id="demoGrid" class="table  table table-hover dt-responsive nowrap" width="100%" cellspacing="0">
 
@@ -38,23 +42,26 @@
 
             </tr>
         </thead>
-        @foreach (var obj in Model)
-        {
-            <tr>
-                <td>@obj.matricule</td>
-                <td>@obj.intitule</td>
-                <td> 59</td>
-                <td id="linkContainer">
-                    <a class="cls no-href" id="detail" onclick="update_url('consulter/@obj.id')" data-toggle="modal" data-target="#exampleModal">consulter</a>
-                    <br/>
-                    <!--<a class="no-href" id="interim" onclick="updateInterimaire(@obj.id)" data-toggle="modal" data-target="#listeCompte">Ajouter un intérimaire</a>
-                    --><a class="no-href" id="conge" onclick="updateConge(@obj.id)" data-toggle="modal" data-target="#dateMission">Ajouter un intérimaire</a>
-                    <br/>
-                    <a class="no-href" id="ajout"  onclick="updateAction(@obj.id)" data-toggle="modal" data-target="#ajoutModal">Ajouter un compte</a>
-                </td>
+        <tbody id="chargeHolder">
+            @*
+            @foreach (var obj in Model)
+            {
+                <tr>
+                    <td>@obj.matricule</td>
+                    <td>@obj.intitule</td>
+                    <td> 59</td>
+                    <td id="linkContainer">
+                        <a class="cls no-href" id="detail" onclick="update_url('consulter/@obj.id')" data-toggle="modal" data-target="#exampleModal">consulter</a>
+                        <br/>
+                        <!--<a class="no-href" id="interim" onclick="updateInterimaire(@obj.id)" data-toggle="modal" data-target="#listeCompte">Ajouter un intérimaire</a>
+                        --><a class="no-href" id="conge" onclick="updateConge(@obj.id)" data-toggle="modal" data-target="#dateMission">Ajouter un congé</a>
+                        <br/>
+                        <a class="no-href" id="ajout"  onclick="updateAction(@obj.id)" data-toggle="modal" data-target="#ajoutModal">Ajouter un compte</a>
+                    </td>
 
-            </tr>
-        }
+                </tr>
+            }*@
+        </tbody>
 
     </table>
     <!--modal consulter -->
@@ -91,6 +98,7 @@
         </div>
     </div>
         <!--modal Date mission -->
+    <form id="formDate" method="POST">
         <div data-backdrop="static" data-keyboard="false" class="modal fade modalStyle" id="dateMission" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"  >
             <div class="modal-dialog" role="document" style="width:400px;">
                 <div class="modal-content">
@@ -116,12 +124,12 @@
                     
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="update_urlClose()">Annuler</button>
-                        <button id="firstScreen" data-toggle="modal" data-target="#listeCompte" type="button" class="btn btn-primary" data-dismiss="modal">Suivant</button>
-
+                        <input type="submit" class="btn btn-primary" value="Ajouter">
                     </div>
                 </div>
             </div>
         </div>
+    </form> 
 
         <form id="formInterimaire">
         <!--modal liste compte -->
@@ -311,10 +319,84 @@
             }
         }
     });
+    $(document).ready(() => getActif());
     
 </script>
 <script>
-    let cpts = [];
+
+    function updateConge(id) {
+        $("#formDate").prop("action",`/ChargeAffaire/UpdateConge/${id}`);
+    }
+
+    $("input[type=date]").prop("min",new Date().toISOString().split('T')[0]);
+
+    function handleSelect() {
+        $("#chargeHolder").empty();
+        if ($("select").val() === "Actif")
+            getActif();
+        else
+            getConge();
+    }
+
+    function getActif() {
+        $.ajax({
+            url: '/ChargeAffaire/GetActif',
+            method: 'get',
+            dataType: 'json',
+            error: (err) => console.log(err),
+            success: (res) => {
+                let s="";
+                for (let i=0;i<res.length;i++) {
+                    s +=`<tr>
+                            <td>${res[i].matricule}</td>
+                            <td>${res[i].intitule}</td>
+                            <td> 59</td>
+                            <td id="linkContainer">
+                                <a class="cls no-href" id="detail" onclick="update_url('consulter/${res[i].id}')" data-toggle="modal" data-target="#exampleModal">consulter</a>
+                                <br/>
+                                <a class="no-href" id="conge" onclick="updateConge(${res[i].id})" data-toggle="modal" data-target="#dateMission">Ajouter un congé</a>
+                                <br/>
+                                <a class="no-href" id="ajout"  onclick="updateAction(${res[i].id})" data-toggle="modal" data-target="#ajoutModal">Ajouter un compte</a>
+                            </td>
+                        </tr>`;
+                }
+                $("#chargeHolder").html(s);
+                $(".no-href").css({"cursor":"pointer","color":"#077bb1"});
+                $(".no-href").parent().css("text-align","center");
+
+            }
+        });
+    }
+
+    function getConge() {
+        $.ajax({
+            url: '/ChargeAffaire/GetConge',
+            method: 'get',
+            dataType: 'json',
+            error: (err) => console.log(err),
+            success: (res) => {
+                let s="";
+                for (let i=0;i<res.length;i++) {
+                    s +=`<tr>
+                            <td>${res[i].matricule}</td>
+                            <td>${res[i].intitule}</td>
+                            <td> 59</td>
+                            <td id="linkContainer">
+                                <a class="cls no-href" id="detail" onclick="update_url('consulter/${res[i].id}')" data-toggle="modal" data-target="#exampleModal">consulter</a>
+                                <br/>
+                                <a class="no-href" id="conge" onclick="updateConge(${res[i].id})" data-toggle="modal" data-target="#dateMission">Modifier congé</a>
+                            </td>
+                        </tr>`;
+                }
+                $("#chargeHolder").html(s);
+                $(".no-href").css({"cursor":"pointer","color":"#077bb1"});
+                $(".no-href").parent().css("text-align","center");
+
+            }
+        });
+
+    }
+
     function getData() { 
         var pathArray = window.location.pathname.split('/');
         var secondLevelLocation = pathArray[3];
