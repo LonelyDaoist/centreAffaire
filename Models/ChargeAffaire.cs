@@ -13,6 +13,8 @@ namespace CentreAffaire.Models
 
         public List<Compte> listComptes = new List<Compte>();
 
+        public Conge conge = new Conge();
+
         public void addCompte(int numC, int codeA, string intit)
         {
             listComptes.Add(new Compte(){id=listComptes.Count,numeroCompte=numC, codeAgence=codeA,intitule=intit, charge=new employee(this.id,this.intitule),interimaire=new employee(this.id,this.intitule)});

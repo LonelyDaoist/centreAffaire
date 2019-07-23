@@ -85,14 +85,21 @@ namespace CentreAffaire.Controllers
         [HttpGet]
         public ActionResult GetActif()
         {
-            var list = ListCharges.list;
+            var list = ListCharges.list.FindAll(x => x.conge.etat == "Actif");
             return Json(list);
         }
         [HttpGet]
         public ActionResult GetConge()
         {
-            var list = ListCharges.list;
+            var list = ListCharges.list.FindAll(x => x.conge.etat == "Conge");
             return Json(list);
+        }
+
+        [HttpPost]
+        public ActionResult UpdateConge(int id, DateTime dateDeb, DateTime dateFin)
+        {
+            ListCharges.list[id].conge.setDate(dateDeb,dateFin);
+            return RedirectToAction("ListCharge");
         }
 
     }
