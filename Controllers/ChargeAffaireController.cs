@@ -58,7 +58,7 @@ namespace CentreAffaire.Controllers
             //return Content($"account: {idCompte},  old: {id},  new: {idCharge}");
         }
 
-         [HttpGet]
+        [HttpGet]
         public ActionResult CheckComptes(int id)
         {
             List<Compte> list = ListCharges.list[id].listComptes;
