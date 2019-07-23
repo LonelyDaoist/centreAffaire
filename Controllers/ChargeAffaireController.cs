@@ -58,31 +58,28 @@ namespace CentreAffaire.Controllers
             //return Content($"account: {idCompte},  old: {id},  new: {idCharge}");
         }
 
-         [HttpPost]
+         [HttpGet]
         public ActionResult CheckComptes(int id)
         {
-            List<Compte> list = ListCharges.list[id].listComptes.FindAll(x => x.interimaire.id == id);
+            List<Compte> list = ListCharges.list[id].listComptes;
             return Json(list);
         }
         
-        [HttpPost]
+        [HttpGet]
         public ActionResult SelectInterim(int id)
         {
             List<ChargeAffaire> list = ListCharges.list.FindAll(x => x.id != id);
             return Json(list);
         }
 
-        [HttpPost]
-        public ActionResult Interimaire(int id,DateTime dateDeb,DateTime dateFin,int[] idsCompte,int idCharge)
+        public ActionResult Interimaire(int id,int[] idsCompte,int idCharge)
         {
             foreach (int c in idsCompte)
             {
                 ListCharges.list[id].listComptes[c].interimaire.id = idCharge;
                 ListCharges.list[id].listComptes[c].interimaire.intitule = ListCharges.list[idCharge].intitule;
             }
-            List<Compte> list = ListCharges.list[id].listComptes.FindAll(x => x.interimaire.id == id);
-            //return Content($"c: {list.Count}");
-            return RedirectToAction("Listcharge");
+            return RedirectToAction("ListCharge");
         }
 
     }
