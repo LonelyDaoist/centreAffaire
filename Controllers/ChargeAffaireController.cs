@@ -43,7 +43,7 @@ namespace CentreAffaire.Controllers
         [HttpPost]
         public ActionResult Remplacant(int id)
         {
-            List<ChargeAffaire> list = ListCharges.list.FindAll(x => x.id != id);
+            List<ChargeAffaire> list = ListCharges.list.FindAll(x => (x.id != id) && (x.conge.etat == "Actif"));
             return Json(list);
         }
 
@@ -55,7 +55,6 @@ namespace CentreAffaire.Controllers
             ListCharges.list[id].listComptes.RemoveAt(idCompte);
             ListCharges.list[id].updateIds(idCompte);
             return RedirectToAction("ListCharge");
-            //return Content($"account: {idCompte},  old: {id},  new: {idCharge}");
         }
 
         [HttpGet]
@@ -68,7 +67,7 @@ namespace CentreAffaire.Controllers
         [HttpGet]
         public ActionResult SelectInterim(int id)
         {
-            List<ChargeAffaire> list = ListCharges.list.FindAll(x => x.id != id);
+            List<ChargeAffaire> list = ListCharges.list.FindAll(x => (x.id != id) && (x.conge.etat == "Actif"));
             return Json(list);
         }
 

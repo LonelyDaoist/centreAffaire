@@ -34,10 +34,6 @@ textarea {
   margin-right: auto;
 }
 
-#linkContainer {
-  text-align: center;
-}
-
 .modal-dialog {
   width: 900px;
 }
@@ -74,7 +70,29 @@ textarea {
   flex-direction: column;
 }
 
+.modal-dialog {
+  width: 100vw;
+  height: 100vh:
+  background: red;
+}
+
 .modal-content {
   width: 175%;
-  margin: 0 -25%;
+  margin: 0 -35%;
+}
+
+.modal-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.btns {
+  align-self: center;
+}
+
+.center-col {
+  text-align: center;
+}
+.color-col {
+  color: #077bb1;
 }
