@@ -13,7 +13,9 @@
         <option value="Conge">En Congé</option>
     </select>
 
-    <table id="demoGrid" class="table  table table-hover dt-responsive nowrap" width="100%" cellspacing="0"> </table>
+    <table id="demoGrid" class="table  table table-hover dt-responsive nowrap" width="100%" cellspacing="0">
+        <thead class="styleHeaderTab"></thead>
+    </table>
     <!--modal consulter -->
     <div data-backdrop="static" data-keyboard="false" class="modal fade modalStyle" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -263,6 +265,19 @@
             {title:"Matricule",data: "matricule"},
             {title:"Intitulé",data: "intitule"},
             {title:"Nombre des comptes",data: () => "59"},
+            {title: "",data: (row) => {
+                if (row.conge.etat === "Actif")
+                    return `<a class="cls no-href" id="detail" onclick="update_url('consulter/${row.id}')" data-toggle="modal" data-target="#exampleModal">consulter</a>
+                            <br/>
+                            <a class="no-href" id="conge" onclick="updateConge(${row.id})" data-toggle="modal" data-target="#dateMission">Ajouter un congé</a>
+                            <br/>
+                            <a class="no-href" id="ajout"  onclick="updateAction(${row.id})" data-toggle="modal" data-target="#ajoutModal">Ajouter un compte</a>
+`;
+                return `<a class="cls no-href" id="detail" onclick="update_url('consulter/${row.id}')" data-toggle="modal" data-target="#exampleModal">consulter</a>
+                        <br/>
+                        <a class="no-href" id="conge" onclick="updateConge(${row.id})" data-toggle="modal" data-target="#dateMission">Modifier congé</a>
+`;
+            }}
         ],
         language: {
             search: "Rechercher",
@@ -403,10 +418,10 @@
         });
     }
     function updateSuppression(idCharge,idCompte) {
-        $("#SupprimerBtn").click(() => window.location.href = `Supprimer/${idCharge}?idCompte=${idCompte}`);
+        $("#SupprimerBtn").click(() => window.location.href = `/ChargeAffaire/Supprimer/${idCharge}?idCompte=${idCompte}`);
     }
     function updateAffectation(idCharge,idCompte) {
-        $("#formAffectation").prop("action",`Affecter/${idCharge}`);
+        $("#formAffectation").prop("action",`/ChargeAffaire/Affecter/${idCharge}`);
         $("#hiddenValue").prop("value",idCompte);
         $.ajax({
             url: `/ChargeAffaire/Remplacant/${idCharge}`,
