@@ -70,11 +70,6 @@ textarea {
   flex-direction: column;
 }
 
-.modal-dialog {
-  width: 100vw;
-  height: 100vh:
-  background: red;
-}
 
 .modal-content {
   width: 175%;
@@ -95,4 +90,11 @@ textarea {
 }
 .color-col {
   color: #077bb1;
+}
+.pointer-col {
+  cursor: pointer;
+}
+
+.red-color {
+  color: tomato;
 }

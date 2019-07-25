@@ -17,13 +17,17 @@ namespace CentreAffaire.Controllers
             List<ChargeAffaire> listCharge = ListCharges.getStaticListCharge();
             return View();
         }
-        [HttpPost]
-        public ActionResult consulter(int id)
+        [HttpGet]
+        public ActionResult Consulter(int id)
         {
-            //ChargeAffaire.getStaticListComptes(id);
             List<Compte> listC = ListCharges.list[id].listComptes;
-            var tuple = (ListCharges.list[id].intitule,listC);
-            return Json(tuple);
+            return Json(listC);
+        }
+
+        [HttpGet]
+        public string GetName(int id)
+        {
+            return ListCharges.list[id].intitule;
         }
 
         [HttpPost]
@@ -78,6 +82,13 @@ namespace CentreAffaire.Controllers
                 ListCharges.list[id].listComptes[c].interimaire.id = idCharge;
                 ListCharges.list[id].listComptes[c].interimaire.intitule = ListCharges.list[idCharge].intitule;
             }
+
+            int n = ListCharges.list[id].listComptes.FindAll(x => x.charge.id == x.interimaire.id).Count;
+            if (n == 0)
+            {
+                ListCharges.list[id].tousInterimaire = true;
+            }
+            
             return RedirectToAction("ListCharge");
         }
 

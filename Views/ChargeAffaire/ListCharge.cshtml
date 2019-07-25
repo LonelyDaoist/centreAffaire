@@ -6,6 +6,8 @@
 <link href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css" rel="stylesheet">
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js"></script>
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
 
 <div>
     <select onchange="handleSelect()">
@@ -29,17 +31,9 @@
                     <br/>
                 </div>
                 <div class="modal-body">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr class="styleHeaderTab">
-                                <th scope="col">Code agence</th>
-                                <th scope="col">Numéro de compte</th>
-                                <th scope="col">Intitulé</th>
-                                <th scope="col">Intérimaire</th>
-                                <th scope="col"></th>
-                            </tr>
+                    <table id="consulterDTable" class="table table-hover">
+                        <thead class="styleHeaderTab">
                         </thead>
-                        <tbody id="rowHolder"></tbody>
                     </table>
                 </div>
                 <div class="modal-footer">
@@ -252,6 +246,18 @@
 </div>
 
 <script>
+    let language = {
+            search: "Rechercher",
+            lengthMenu: "Afficher _MENU_ chargés par page",
+            info: "Page: _PAGE_ / _PAGES_",
+            infoEmpty: "",
+            infoFiltered: "",
+            emptyTable: "La liste est vide",
+            paginate: {
+                next: "",
+                previous: ""
+            }
+        }
 
     let dTable = $('#demoGrid').DataTable({
         columns: [
@@ -262,33 +268,48 @@
             },className: "center-col"},
             {title: "",data: (row) => {
                 if (row.conge.etat === "Actif")
-                    return `<a class="cls no-href" id="detail" onclick="update_url('consulter/${row.id}')" data-toggle="modal" data-target="#exampleModal">consulter</a>
+                    return `<a class="cls no-href" id="detail" onclick="getData(${row.id})" data-toggle="modal" data-target="#exampleModal">Consulter</a>
                             <br/>
                             <a class="no-href" id="conge" onclick="updateConge(${row.id})" data-toggle="modal" data-target="#dateMission">Ajouter un congé</a>
                             <br/>
                             <a class="no-href" id="ajout"  onclick="updateAction(${row.id})" data-toggle="modal" data-target="#ajoutModal">Ajouter un compte</a>
 `;
-                return `<a class="cls no-href" id="detail" onclick="update_url('consulter/${row.id}')" data-toggle="modal" data-target="#exampleModal">consulter</a>
+                return `<a class="cls no-href" id="detail" onclick="getData(${row.id})" data-toggle="modal" data-target="#exampleModal">Consulter</a>
                         <br/>
                         <a class="no-href" id="conge" onclick="updateConge(${row.id})" data-toggle="modal" data-target="#dateMission">Modifier congé</a>
                         <br/>
                         <a class="no-href" id="interim" onclick="updateInterimaire(${row.id})" data-toggle="modal" data-target="#listeCompte">Ajouter un interimaire</a>`;
-            },className: "center-col color-col"}
+            },className: "center-col color-col pointer-col"},
+            {title: "",data: (row) => {
+                if (row.conge.etat === "Conge" && row.tousInterimaire === false)
+                    return '<i class="fa fa-exclamation-triangle fa-5x red-color"></i>'
+                return ""
+            }}
+        ],
+        language: language
+    });
+
+    let consulerDTable = $("#consulterDTable").DataTable({
+        columns: [
+            {title:"Code agence",data: "codeAgence"},
+            {title:"Numéro de compte",data: "numeroCompte"},
+            {title:"Intitulé",data:"intitule"},
+            {title:"Intérimaire",data: "interimaire.intitule"},
+            {title: "",data: (row) => {
+                return `<a class="no-href" onclick="updateSuppression(${row.charge.id},${row.id})" data-toggle="modal" data-target="#SuppressionCompte">Supprimer compte</a>
+                        <br/>
+                        <a class="no-href" onclick="updateAffectation(${row.charge.id},${row.id})" data-toggle="modal" data-target="#changementAffectation">Affecter compte</a>`;
+            },className: "center-col color-col pointer-colx"}
         ],
         language: {
-            search: "Rechercher",
-            lengthMenu: "Afficher _MENU_ chargés par page",
-            info: "Page: _PAGE_ / _PAGES_",
-            paginate: {
-                next: "Suivante",
-                previous: "Précédente"
+            ...language,
+            lengthMenu: "Afficher _MENU_ comptes par page"
             }
-        }
     });
-    $(document).ready(() => getActif());
     
 </script>
 <script>
+    $(document).ready(() => getActif());
 
     function updateConge(id) {
         $("#formDate").prop("action",`/ChargeAffaire/UpdateConge/${id}`);
@@ -318,42 +339,16 @@
         });
     }
 
-    function getData() { 
-        var pathArray = window.location.pathname.split('/');
-        var secondLevelLocation = pathArray[3];
-        
-        $.ajax({
-            
-            url: "/ChargeAffaire/consulter/" + secondLevelLocation,
-            method: 'post',
-            dataType: 'json',
-            error: (err) => console.log(err),
-            success: function (csResponse) {
-                $(".name").text(csResponse.item1);
-                let s = "";
-                if (csResponse.item2.length !== 0){
+    function getData(id) { 
+  
+        $.get(`/ChargeAffaire/Consulter/${id}`,(res) => {
+            consulerDTable.clear();
+            consulerDTable.rows.add(res);
+            consulerDTable.draw();
+        });
 
-                    console.log(csResponse);
-
-                    for (let i=0;i<csResponse.item2.length;i++){
-                        s +=`<tr>
-                                <td>${csResponse.item2[i].codeAgence}</td>
-                                <td>${csResponse.item2[i].numeroCompte}</td>
-                                <td>${csResponse.item2[i].intitule}</td>
-                                <td>${csResponse.item2[i].interimaire.intitule}</td>
-                                <td>
-                                    <a class="no-href" onclick="updateSuppression(${csResponse.item2[i].charge.id},${csResponse.item2[i].id})" data-toggle="modal" data-target="#SuppressionCompte">Supprimer compte</a>
-                                    <br/>
-                                    <a class="no-href" onclick="updateAffectation(${csResponse.item2[i].charge.id},${csResponse.item2[i].id})" data-toggle="modal" data-target="#changementAffectation">Affecter compte</a>
-                                </td>
-                            </tr>`;
-                    }
-                }
-                    
-                $("#rowHolder").html(s);
-            }
-        
-            
+        $.get(`/ChargeAffaire/GetName/${id}`,(res) => {
+            $(".name").text(res);
         });
     }
     function updateSuppression(idCharge,idCompte) {
@@ -368,7 +363,6 @@
             dataType: 'json',
             error: (err) => console.log(err),
             success: (res) => {
-                //console.log(res);
                 let s = '';
                 if (res.length!==0){
                     for (let i=0;i<res.length;i++){
@@ -390,10 +384,6 @@
         });
     }
 
-    function update_url(url) {
-        history.pushState(null, null, url);
-        getData();
-    }
     function update_urlClose()
     {
         history.pushState(null, null, "/ChargeAffaire/ListCharge");
@@ -444,7 +434,6 @@
 
     function checkAll() {
         let state = $("#allCheck").prop("checked");
-        //console.log(state);
         $(".checkChild").prop("checked",state);
     }
 

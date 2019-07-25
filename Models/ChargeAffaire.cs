@@ -10,11 +10,9 @@ namespace CentreAffaire.Models
         public int id { get; set; }
         public int matricule { get; set; }
         public String intitule { get; set; }
-
         public List<Compte> listComptes = new List<Compte>();
-
+        public bool tousInterimaire = false;
         public Conge conge = new Conge();
-
         public void addCompte(int numC, int codeA, string intit)
         {
             listComptes.Add(new Compte(){id=listComptes.Count,numeroCompte=numC, codeAgence=codeA,intitule=intit, charge=new employee(this.id,this.intitule),interimaire=new employee(this.id,this.intitule)});
