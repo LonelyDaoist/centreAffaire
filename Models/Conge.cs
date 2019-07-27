@@ -6,10 +6,10 @@ namespace CentreAffaire.Models
     public class Conge
     {
         [DataType(DataType.Date)]
-        DateTime debut { get; set; }
+        public DateTime debut { get; set; }
 
         [DataType(DataType.Date)]
-        DateTime fin { get; set; }
+        public DateTime fin { get; set; }
 
         public string etat { get; set; }
         public Conge()

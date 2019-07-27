@@ -33,12 +33,14 @@ namespace CentreAffaire.Controllers
         [HttpPost]
         public ActionResult Ajouter(int id, int codeAgence,int numCompte, string intitule)
         {
+            ListLog.ajoutLog(id,codeAgence,numCompte);
             ListCharges.list[id].addCompte(numCompte, codeAgence, intitule);
             return RedirectToAction("ListCharge");
         }
 
         public ActionResult Supprimer(int id,int idCompte)
         {
+            ListLog.suppressionLog(id,idCompte);
             ListCharges.list[id].listComptes.RemoveAt(idCompte);
             ListCharges.list[id].updateIds(idCompte);
             return RedirectToAction("ListCharge");
@@ -54,6 +56,7 @@ namespace CentreAffaire.Controllers
         [HttpPost]
         public ActionResult Affecter(int id,int idCompte,int idCharge)
         {
+            ListLog.affectationLog(id,idCompte,idCharge);
             Compte cpt = ListCharges.list[id].listComptes[idCompte];
             ListCharges.list[idCharge].addCompte(cpt.numeroCompte,cpt.codeAgence,cpt.intitule);
             ListCharges.list[id].listComptes.RemoveAt(idCompte);
@@ -79,6 +82,7 @@ namespace CentreAffaire.Controllers
         {
             foreach (int c in idsCompte)
             {
+                ListLog.interimaireLog(id,c,idCharge);
                 ListCharges.list[id].listComptes[c].interimaire.id = idCharge;
                 ListCharges.list[id].listComptes[c].interimaire.intitule = ListCharges.list[idCharge].intitule;
             }
@@ -108,8 +112,20 @@ namespace CentreAffaire.Controllers
         [HttpPost]
         public ActionResult UpdateConge(int id, DateTime dateDeb, DateTime dateFin)
         {
+            ListLog.congeLog(id,dateDeb,dateFin);
             ListCharges.list[id].conge.setDate(dateDeb,dateFin);
             return RedirectToAction("ListCharge");
+        }
+
+        public ActionResult GetLog()
+        {
+            string s = "";
+            var list = ListLog.list;
+            foreach (var log in list)
+            {
+                s += log.message + "\n";
+            }
+            return Content(s);
         }
 
     }
