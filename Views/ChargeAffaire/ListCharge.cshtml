@@ -261,6 +261,11 @@
 
     let dTable = $('#demoGrid').DataTable({
         columns: [
+            {title: "",data: (row) => {
+                if (row.conge.etat === "Conge" && row.tousInterimaire === false)
+                    return '<i class="fa fa-exclamation-triangle fa-2x red-color"></i>'
+                return ""
+            }},
             {title:"Matricule",data: "matricule"},
             {title:"Intitulé",data: "intitule",className: "center-col"},
             {title:"Nombre de comptes",data: (row) => {
@@ -280,11 +285,7 @@
                         <br/>
                         <a class="no-href" id="interim" onclick="updateInterimaire(${row.id})" data-toggle="modal" data-target="#listeCompte">Ajouter un interimaire</a>`;
             },className: "center-col color-col pointer-col"},
-            {title: "",data: (row) => {
-                if (row.conge.etat === "Conge" && row.tousInterimaire === false)
-                    return '<i class="fa fa-exclamation-triangle fa-5x red-color"></i>'
-                return ""
-            }}
+            
         ],
         language: language
     });
