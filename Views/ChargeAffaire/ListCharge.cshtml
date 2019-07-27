@@ -59,11 +59,11 @@
                         <div class="styleDate">  
                             <div class="dateFlex">
                                 <label fpr="dateDeb" style="width:150px;">Date de début</label>
-                                <input id="dateDeb" type="date" name="dateDeb">
+                                <input id="dateDeb" type="date" name="dateDeb" required>
                             </div>
                             <div class="dateFlex">
                                 <label fpr="dateFin" style="width:150px;">Date de Fin</label>
-                                <input id="dateFin" type="date" name="dateFin">
+                                <input id="dateFin" type="date" name="dateFin" required>
                             </div>
                         </div>
                     </div>
@@ -77,7 +77,7 @@
         </div>
     </form> 
 
-        <form id="formInterimaire">
+        <form id="formInterimaire"  onsubmit="abort(event)">
         <!--modal liste compte -->
         <div data-backdrop="static" data-keyboard="false" class="modal fade modalStyle" id="listeCompte" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -108,7 +108,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="update_urlClose()">Retour</button>
-                        <button id ="secondScreen" data-toggle="modal" data-target="#listeInterimaire" type="button" class="btn btn-primary" data-dismiss="modal">Suivant</button>
+                        <butto id ="secondScreen" data-toggle="modal" data-target="#listeInterimaire" type="button" class="btn btn-primary" data-dismiss="modal">Suivant</button>
 
                     </div>
                 </div>
@@ -206,13 +206,13 @@
                         </div>
                         <div class="flexbox-modal-child">
                             <span style="height:30px;">
-                                <input id="codeAgence" name="codeAgence" type="text" style="width:30px;">
+                                <input id="codeAgence" name="codeAgence" type="text" style="width:30px;" required>
                             </span>
                             <span style="height:30px;">
-                                <input id="numCompte" name="numCompte" type="text" style="width:100px;">
+                                <input id="numCompte" name="numCompte" type="text" style="width:100px;" required>
                             </span>
                             <span style="height:30px;">
-                                <input id="intitule" name="intitule" type="text" style="width:100px;">
+                                <input id="intitule" name="intitule" type="text" style="width:100px;" required>
                             </span>
                         </div>
                     </div>
@@ -310,6 +310,8 @@
     
 </script>
 <script>
+
+
     $(document).ready(() => getActif());
 
     function updateConge(id) {
@@ -463,6 +465,15 @@
                 $("#rowHolder3").html(s);
             }
         });
-    }    
+    }
+    function abort(event) {
+        let n = $( "input:checked" ).length;
+        if (n === 0) {
+            event.preventDefault();
+            $("#listeInterimaire").modal("hide");
+            $("#listeCompte").modal("show");
+        }
+        return false;
+    }  
 
 </script>
