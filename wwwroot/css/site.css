@@ -64,10 +64,13 @@ textarea {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  height: 150px;
 }
 .flexbox-modal-child {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  
 }
 
 
