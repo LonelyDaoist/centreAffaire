@@ -124,7 +124,7 @@
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="update_urlClose()">Annuler</button>
 
                         <!--<button data-toggle="modal" data-target="#exampleModal" type="button" class="btn btn-primary" data-dismiss="modal">Affecter</button>
-                        --><input id="thirdScreen"  class="btn btn-primary" type="submit" value="Ajouter">
+                        --><input id="thirdScreen" data-dismiss="modal"  class="btn btn-primary" type="submit" value="Ajouter">
                     </div>
                 </div>
             </div>
@@ -432,7 +432,7 @@
     }
     function checkComptes(id) {
         history.pushState(null,null,`/ChargeAffaire/CheckComptes/${id}`);
-        checkAll();
+        compteTable.on("click","th.selectAll",checkAll);
         
         $.get(`/ChargeAffaire/CheckComptes/${id}`,(res) => {
            compteTable.clear();
@@ -454,6 +454,8 @@
 
         $("#thirdScreen").click(() => {
             let d = compteTable.rows({selected: true}).data();
+            if (d.length === 0)
+                abort();
             let ids = [];
             for (let i=0;i<d.length;i++)
                 ids.push(d[i].id);
@@ -462,24 +464,18 @@
         });
     }
     function checkAll(){
-        compteTable.on("click","th.selectAll",() => {
-            if ($("th.selectAll").hasClass("selected")){
-                compteTable.rows().deselect();
-                $("th.selectAll").removeClass("selected");
-            }
-            else {
-                compteTable.rows().select();
-                $("th.selectAll").addClass("selected");
-            }
-        });
-    }
-    function abort(event) {
-        let n = $( "input:checked" ).length;
-        if (n === 0) {
-            event.preventDefault();
-            $("#listeInterimaire").modal("hide");
-            $("#listeCompte").modal("show");
+        if ($("th.selectAll").hasClass("selected")){
+            compteTable.rows().deselect();
+            $("th.selectAll").removeClass("selected");
         }
+        else {
+            compteTable.rows().select();
+            $("th.selectAll").addClass("selected");
+        }
+    }
+    function abort() {
+        $("#listeInterimaire").modal("hide");
+        $("#listeCompte").modal("show");
         return false;
     }  
 

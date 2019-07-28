@@ -78,7 +78,7 @@ namespace CentreAffaire.Controllers
             return Json(list);
         }
 
-        public ActionResult Interimaire(int id,int[] idsCompte,int idCharge)
+        public void Interimaire(int id,int[] idsCompte,int idCharge)
         {
             foreach (int c in idsCompte)
             {
@@ -93,7 +93,6 @@ namespace CentreAffaire.Controllers
                 ListCharges.list[id].tousInterimaire = true;
             }
             
-            return RedirectToAction("ListCharge");
         }
 
         [HttpGet]
