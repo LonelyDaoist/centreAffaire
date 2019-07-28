@@ -79,7 +79,6 @@
         </div>
     </form> 
 
-        <form id="formInterimaire"  onsubmit="abort(event)">
         <!--modal liste compte -->
         <div data-backdrop="static" data-keyboard="false" class="modal fade modalStyle" id="listeCompte" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -117,17 +116,8 @@
                         <h3 class="modal-title" id="listeInterimaireLabel">Choisir un intérimaire</h3>
                     </div>
                     <div class="modal-body">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr class="styleHeaderTab">
-                                    <th scope="col"></th>
-                                    <th scope="col">Matricule</th>
-                                    <th scope="col">Intitulé</th>
-
-                                </tr>
-                            </thead>
-                            <tbody id="rowHolder3"></tbody>
-                            </tbody>
+                        <table id="interimTable" class="table table-hover">
+                            <thead class="styleHeaderTab"></thead>
                         </table>
                     </div>
                     <div class="modal-footer">
@@ -139,7 +129,6 @@
                 </div>
             </div>
         </div>
-       </form> 
 
     <!--modal Changement affectation -->
     <form id="formAffectation" method="POST">
@@ -333,6 +322,23 @@
        },
    });
 
+   let interimTable = $("#interimTable").DataTable({
+       columns: [
+            {
+                title: "Matricule",
+                data: "matricule",
+            },
+            {
+                title: "Intitulé",
+                data: "intitule",
+            }
+       ],
+       select: {
+            style: "single",
+            info: false,
+        },
+   });
+
 </script>
 <script>
 
@@ -422,21 +428,11 @@
     }
 
     function updateInterimaire(id){
-        $("#formInterimaire").prop("action",`/ChargeAffaire/Interimaire/${id}`);
         checkComptes(id);
     }
     function checkComptes(id) {
         history.pushState(null,null,`/ChargeAffaire/CheckComptes/${id}`);
-        compteTable.on("click","th.selectAll",() => {
-            if ($("th.selectAll").hasClass("selected")){
-                compteTable.rows().deselect();
-                $("th.selectAll").removeClass("selected");
-            }
-            else {
-                compteTable.rows().select();
-                $("th.selectAll").addClass("selected");
-            }
-        });
+        checkAll();
         
         $.get(`/ChargeAffaire/CheckComptes/${id}`,(res) => {
            compteTable.clear();
@@ -450,27 +446,30 @@
 
     function selectInterim(id) {
         history.pushState(null,null,`/ChargeAffaire/SelectInterim/${id}`);
-        $.ajax({
-            url:`/ChargeAffaire/SelectInterim/${id}`,
-            method: 'get',
-            dataType: 'json',
-            error: (err) => console.log(err),
-            success: (res) =>   {
-                let s = "";
-                for (let i=0;i<res.length;i++){
-                    s+= `<tr>
-                            <td>
-                                <input type="radio" name="idCharge" value="${res[i].id}">
-                            </td>
-                            <td>
-                                ${res[i].matricule}
-                            </td>
-                            <td>
-                                ${res[i].intitule}
-                            </td>
-                        </tr>`;
-                }
-                $("#rowHolder3").html(s);
+        $.get(`/ChargeAffaire/SelectInterim/${id}`,(res) => {
+            interimTable.clear();
+            interimTable.rows.add(res);
+            interimTable.draw();
+        });
+
+        $("#thirdScreen").click(() => {
+            let d = compteTable.rows({selected: true}).data();
+            let ids = [];
+            for (let i=0;i<d.length;i++)
+                ids.push(d[i].id);
+            let idC = interimTable.row({selected: true}).data().id;
+            $.post(`/ChargeAffaire/Interimaire`,{id:id,idsCompte:ids,idCharge:idC});
+        });
+    }
+    function checkAll(){
+        compteTable.on("click","th.selectAll",() => {
+            if ($("th.selectAll").hasClass("selected")){
+                compteTable.rows().deselect();
+                $("th.selectAll").removeClass("selected");
+            }
+            else {
+                compteTable.rows().select();
+                $("th.selectAll").addClass("selected");
             }
         });
     }
