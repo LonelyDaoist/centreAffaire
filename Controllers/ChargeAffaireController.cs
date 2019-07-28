@@ -116,6 +116,14 @@ namespace CentreAffaire.Controllers
             return RedirectToAction("ListCharge");
         }
 
+        [HttpGet]
+        public ActionResult GetCongeDate(int id)
+        {
+            var d = ListCharges.list[id].conge.debut;
+            var f = ListCharges.list[id].conge.fin;
+            return Json(new {debut=d,fin=f});
+        }
+
         public ActionResult GetLog()
         {
             string s = "";
