@@ -95,16 +95,23 @@ namespace CentreAffaire.Controllers
             
         }
 
+        private static bool congeConditions(ChargeAffaire x)
+        {
+            return (x.conge.etat == "Conge")
+                && (DateTime.Compare(x.conge.debut,DateTime.Today) <= 0);
+        }
+
         [HttpGet]
         public ActionResult GetActif()
         {
-            var list = ListCharges.list.FindAll(x => x.conge.etat == "Actif");
+            var list = ListCharges.list.FindAll(x => !congeConditions(x));
             return Json(list);
         }
         [HttpGet]
+
         public ActionResult GetConge()
         {
-            var list = ListCharges.list.FindAll(x => x.conge.etat == "Conge");
+            var list = ListCharges.list.FindAll(x => congeConditions(x));
             return Json(list);
         }
 
