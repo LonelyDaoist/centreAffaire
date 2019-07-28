@@ -347,6 +347,15 @@
 
     function updateConge(id) {
         $("#formDate").prop("action",`/ChargeAffaire/UpdateConge/${id}`);
+        if ($("select").val() === "Conge")
+            getCongeDate(id);
+    }
+
+    function getCongeDate(id) {
+        $.get(`/ChargeAffaire/GetCongeDate/${id}`,(res) => {
+            $("#dateDeb").prop("value",res.debut.split('T')[0]);
+            $("#dateFin").prop("value",res.fin.split('T')[0]);
+        });
     }
 
     $("input[type=date]").prop("min",new Date().toISOString().split('T')[0]);
